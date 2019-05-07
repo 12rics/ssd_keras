@@ -401,12 +401,7 @@ class DataGenerator:
                   images_dirs,
                   image_set_filenames,
                   annotations_dirs=[],
-                  classes=['background',
-                           'aeroplane', 'bicycle', 'bird', 'boat',
-                           'bottle', 'bus', 'car', 'cat',
-                           'chair', 'cow', 'diningtable', 'dog',
-                           'horse', 'motorbike', 'person', 'pottedplant',
-                           'sheep', 'sofa', 'train', 'tvmonitor'],
+                  classes=['face'],
                   include_classes = 'all',
                   exclude_truncated=False,
                   exclude_difficult=False,
@@ -781,26 +776,75 @@ class DataGenerator:
         for i in tr:
 
             # Store the image.
-            with Image.open(self.filenames[i]) as image:
+            try:
+                with Image.open(self.filenames[i]) as image:
 
-                image = np.asarray(image, dtype=np.uint8)
+                    image = np.asarray(image, dtype=np.uint8)
 
-                # Make sure all images end up having three channels.
-                if image.ndim == 2:
-                    image = np.stack([image] * 3, axis=-1)
-                elif image.ndim == 3:
-                    if image.shape[2] == 1:
-                        image = np.concatenate([image] * 3, axis=-1)
-                    elif image.shape[2] == 4:
-                        image = image[:,:,:3]
+                    # Make sure all images end up having three channels.
+                    if image.ndim == 2:
+                        image = np.stack([image] * 3, axis=-1)
+                    elif image.ndim == 3:
+                        if image.shape[2] == 1:
+                            image = np.concatenate([image] * 3, axis=-1)
+                        elif image.shape[2] == 4:
+                            image = image[:,:,:3]
 
-                if resize:
-                    image = cv2.resize(image, dsize=(resize[1], resize[0]))
+                    if resize:
+                        image = cv2.resize(image, dsize=(resize[1], resize[0]))
 
-                # Flatten the image array and write it to the images dataset.
-                hdf5_images[i] = image.reshape(-1)
-                # Write the image's shape to the image shapes dataset.
-                hdf5_image_shapes[i] = image.shape
+                    # Flatten the image array and write it to the images dataset.
+                    hdf5_images[i] = image.reshape(-1)
+                    # Write the image's shape to the image shapes dataset.
+                    hdf5_image_shapes[i] = image.shape
+            except:
+                try:
+                    self.filenames[i]=self.filenames[i].split('.')[0] + '.png'
+                    with Image.open(self.filenames[i]) as image:
+
+                        image = np.asarray(image, dtype=np.uint8)
+
+                        # Make sure all images end up having three channels.
+                        if image.ndim == 2:
+                            image = np.stack([image] * 3, axis=-1)
+                        elif image.ndim == 3:
+                            if image.shape[2] == 1:
+                                image = np.concatenate([image] * 3, axis=-1)
+                            elif image.shape[2] == 4:
+                                image = image[:,:,:3]
+
+                        if resize:
+                            image = cv2.resize(image, dsize=(resize[1], resize[0]))
+
+                        # Flatten the image array and write it to the images dataset.
+                        hdf5_images[i] = image.reshape(-1)
+                        # Write the image's shape to the image shapes dataset.
+                        hdf5_image_shapes[i] = image.shape
+                except:
+                    try:
+                        self.filenames[i]=self.filenames[i].split('.')[0] + '.jpeg'
+                        with Image.open(self.filenames[i]) as image:
+
+                            image = np.asarray(image, dtype=np.uint8)
+
+                            # Make sure all images end up having three channels.
+                            if image.ndim == 2:
+                                image = np.stack([image] * 3, axis=-1)
+                            elif image.ndim == 3:
+                                if image.shape[2] == 1:
+                                    image = np.concatenate([image] * 3, axis=-1)
+                                elif image.shape[2] == 4:
+                                    image = image[:,:,:3]
+
+                            if resize:
+                                image = cv2.resize(image, dsize=(resize[1], resize[0]))
+
+                            # Flatten the image array and write it to the images dataset.
+                            hdf5_images[i] = image.reshape(-1)
+                            # Write the image's shape to the image shapes dataset.
+                            hdf5_image_shapes[i] = image.shape
+                    except Exception as e:
+                        raise e
 
             # Store the ground truth if we have any.
             if not (self.labels is None):

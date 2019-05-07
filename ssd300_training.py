@@ -34,8 +34,7 @@ from data_generator.object_detection_2d_geometric_ops import Resize
 from data_generator.object_detection_2d_photometric_ops import ConvertTo3Channels
 from data_generator.data_augmentation_chain_original_ssd import SSDDataAugmentation
 from data_generator.object_detection_2d_misc_utils import apply_inverse_transforms
-
-get_ipython().run_line_magic('matplotlib', 'inline')
+import matplotlib
 
 
 # ## 0. Preliminary note
@@ -148,16 +147,16 @@ model.compile(optimizer=sgd, loss=ssd_loss.compute_loss)
 
 
 # TODO: Set the path to the `.h5` file of the model to be loaded.
-model_path = 'path/to/trained/model.h5'
+#model_path = 'path/to/trained/model.h5'
 
 # We need to create an SSDLoss object in order to pass that to the model loader.
-ssd_loss = SSDLoss(neg_pos_ratio=3, alpha=1.0)
+#ssd_loss = SSDLoss(neg_pos_ratio=3, alpha=1.0)
 
-K.clear_session() # Clear previous models from memory.
+#K.clear_session() # Clear previous models from memory.
 
-model = load_model(model_path, custom_objects={'AnchorBoxes': AnchorBoxes,
-                                               'L2Normalization': L2Normalization,
-                                               'compute_loss': ssd_loss.compute_loss})
+#model = load_model(model_path, custom_objects={'AnchorBoxes': AnchorBoxes,
+                                               #'L2Normalization': L2Normalization,
+                                               #'compute_loss': ssd_loss.compute_loss})
 
 
 # ## 3. Set up the data generators for the training
@@ -193,12 +192,12 @@ val_dataset = DataGenerator(load_images_into_memory=False, hdf5_dataset_path=Non
 # TODO: Set the paths to the datasets here.
 
 # The directories that contain the images.
-VOC_2007_images_dir      = '../../datasets/VOCdevkit/VOC2007/JPEGImages/'
-VOC_2012_images_dir      = '../../datasets/VOCdevkit/VOC2012/JPEGImages/'
+VOC_2007_images_dir      = 'val/'
+VOC_2012_images_dir      = 'train/'
 
 # The directories that contain the annotations.
-VOC_2007_annotations_dir      = '../../datasets/VOCdevkit/VOC2007/Annotations/'
-VOC_2012_annotations_dir      = '../../datasets/VOCdevkit/VOC2012/Annotations/'
+VOC_2007_annotations_dir      = 'val_an/'
+VOC_2012_annotations_dir      = 'train_an/'
 
 # The paths to the image sets.
 VOC_2007_train_image_set_filename    = '../../datasets/VOCdevkit/VOC2007/ImageSets/Main/train.txt'
@@ -206,23 +205,15 @@ VOC_2012_train_image_set_filename    = '../../datasets/VOCdevkit/VOC2012/ImageSe
 VOC_2007_val_image_set_filename      = '../../datasets/VOCdevkit/VOC2007/ImageSets/Main/val.txt'
 VOC_2012_val_image_set_filename      = '../../datasets/VOCdevkit/VOC2012/ImageSets/Main/val.txt'
 VOC_2007_trainval_image_set_filename = '../../datasets/VOCdevkit/VOC2007/ImageSets/Main/trainval.txt'
-VOC_2012_trainval_image_set_filename = '../../datasets/VOCdevkit/VOC2012/ImageSets/Main/trainval.txt'
-VOC_2007_test_image_set_filename     = '../../datasets/VOCdevkit/VOC2007/ImageSets/Main/test.txt'
+VOC_2012_trainval_image_set_filename = 'train.txt'
+VOC_2007_test_image_set_filename     = 'test.txt'
 
 # The XML parser needs to now what object class names to look for and in which order to map them to integers.
-classes = ['background',
-           'aeroplane', 'bicycle', 'bird', 'boat',
-           'bottle', 'bus', 'car', 'cat',
-           'chair', 'cow', 'diningtable', 'dog',
-           'horse', 'motorbike', 'person', 'pottedplant',
-           'sheep', 'sofa', 'train', 'tvmonitor']
+classes = ['face']
 
-train_dataset.parse_xml(images_dirs=[VOC_2007_images_dir,
-                                     VOC_2012_images_dir],
-                        image_set_filenames=[VOC_2007_trainval_image_set_filename,
-                                             VOC_2012_trainval_image_set_filename],
-                        annotations_dirs=[VOC_2007_annotations_dir,
-                                          VOC_2012_annotations_dir],
+train_dataset.parse_xml(images_dirs=[VOC_2012_images_dir],
+                        image_set_filenames=[VOC_2012_trainval_image_set_filename],
+                        annotations_dirs=[VOC_2012_annotations_dir],
                         classes=classes,
                         include_classes='all',
                         exclude_truncated=False,
@@ -492,12 +483,7 @@ print(y_pred_decoded_inv[i])
 
 # Set the colors for the bounding boxes
 colors = plt.cm.hsv(np.linspace(0, 1, n_classes+1)).tolist()
-classes = ['background',
-           'aeroplane', 'bicycle', 'bird', 'boat',
-           'bottle', 'bus', 'car', 'cat',
-           'chair', 'cow', 'diningtable', 'dog',
-           'horse', 'motorbike', 'person', 'pottedplant',
-           'sheep', 'sofa', 'train', 'tvmonitor']
+classes = ['face']
 
 plt.figure(figsize=(20,12))
 plt.imshow(batch_original_images[i])
