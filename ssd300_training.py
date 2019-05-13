@@ -34,7 +34,6 @@ from data_generator.object_detection_2d_geometric_ops import Resize
 from data_generator.object_detection_2d_photometric_ops import ConvertTo3Channels
 from data_generator.data_augmentation_chain_original_ssd import SSDDataAugmentation
 from data_generator.object_detection_2d_misc_utils import apply_inverse_transforms
-import matplotlib
 
 
 # ## 0. Preliminary note
@@ -57,7 +56,7 @@ img_width = 300 # Width of the model input images
 img_channels = 3 # Number of color channels of the model input images
 mean_color = [123, 117, 104] # The per-channel mean of the images in the dataset. Do not change this value if you're using any of the pre-trained weights.
 swap_channels = [2, 1, 0] # The color channel order in the original SSD is BGR, so we'll have the model reverse the color channel order of the input images.
-n_classes = 20 # Number of positive classes, e.g. 20 for Pascal VOC, 80 for MS COCO
+n_classes = 1 # Number of positive classes, e.g. 20 for Pascal VOC, 80 for MS COCO
 scales_pascal = [0.1, 0.2, 0.37, 0.54, 0.71, 0.88, 1.05] # The anchor box scaling factors used in the original SSD300 for the Pascal VOC datasets
 scales_coco = [0.07, 0.15, 0.33, 0.51, 0.69, 0.87, 1.05] # The anchor box scaling factors used in the original SSD300 for the MS COCO datasets
 scales = scales_pascal
@@ -119,7 +118,7 @@ model = ssd_300(image_size=(img_height, img_width, img_channels),
 # 2: Load some weights into the model.
 
 # TODO: Set the path to the weights you want to load.
-weights_path = 'VGG_ILSVRC_16_layers_fc_reduced.h5'
+weights_path = 'VGG_VOC0712Plus_SSD_300x300_ft_iter_160000.h5'
 
 model.load_weights(weights_path, by_name=True)
 
