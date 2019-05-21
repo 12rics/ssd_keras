@@ -118,7 +118,7 @@ model = ssd_300(image_size=(img_height, img_width, img_channels),
 # 2: Load some weights into the model.
 
 # TODO: Set the path to the weights you want to load.
-weights_path = 'VGG_VOC0712Plus_SSD_300x300_ft_iter_160000.h5'
+weights_path = 'ssd300_pascal_07+12_epoch-05_loss-0.0236_val_loss-0.0213.h5'
 
 model.load_weights(weights_path, by_name=True)
 
@@ -382,13 +382,13 @@ initial_epoch   = 0
 final_epoch     = 120
 steps_per_epoch = 1000
 
-history = model.fit_generator(generator=train_generator,
-                              steps_per_epoch=steps_per_epoch,
-                              epochs=final_epoch,
-                              callbacks=callbacks,
-                              validation_data=val_generator,
-                              validation_steps=ceil(val_dataset_size/batch_size),
-                              initial_epoch=initial_epoch)
+# history = model.fit_generator(generator=train_generator,
+#                               steps_per_epoch=steps_per_epoch,
+#                               epochs=final_epoch,
+#                               callbacks=callbacks,
+#                               validation_data=val_generator,
+#                               validation_steps=ceil(val_dataset_size/batch_size),
+#                               initial_epoch=initial_epoch)
 
 
 # ## 6. Make predictions
@@ -504,7 +504,8 @@ for box in y_pred_decoded_inv[i]:
     xmax = box[4]
     ymax = box[5]
     color = colors[int(box[0])]
-    label = '{}: {:.2f}'.format(classes[int(box[0])], box[1])
+    print(classes, box[0], box[1])
+    label = '{}: {:.2f}'.format(classes[int(box[0])-1], box[1])
     current_axis.add_patch(plt.Rectangle((xmin, ymin), xmax-xmin, ymax-ymin, color=color, fill=False, linewidth=2))  
     current_axis.text(xmin, ymin, label, size='x-large', color='white', bbox={'facecolor':color, 'alpha':1.0})
 
